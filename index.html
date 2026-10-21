@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>五年级华文｜Emoji猜成语 20题</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:"Microsoft YaHei","Noto Sans SC",sans-serif;background:linear-gradient(135deg,#eef8ff,#fff4e9);color:#26364d}
+.wrap{max-width:1080px;margin:auto;padding:20px}
+header{background:linear-gradient(135deg,#347fc9,#7654c8);color:#fff;border-radius:26px;padding:22px 26px;box-shadow:0 8px 25px #425b7a30}
+h1{margin:0;font-size:36px}.sub{margin-top:7px;font-size:18px}
+.top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:15px 0}
+.badge{background:#fff;padding:9px 15px;border-radius:15px;font-weight:bold;box-shadow:0 3px 10px #0001}
+.progress{height:13px;background:#dce6f0;border-radius:20px;overflow:hidden;flex:1;min-width:180px}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#39c993,#ffc34d);transition:.3s}
+.card{background:#fff;border-radius:25px;padding:28px;box-shadow:0 8px 28px #425b7a20}
+.title{text-align:center;color:#7654c8;font-size:27px;font-weight:bold}
+.part{text-align:center;color:#e87532;font-size:16px;font-weight:bold;margin-top:5px}
+.emoji{display:flex;justify-content:center;gap:24px;font-size:70px;margin:28px 0 18px}
+.question{text-align:center;font-size:24px;font-weight:bold;margin-bottom:16px}
+.hint{text-align:center;font-size:17px;color:#65748a;margin-bottom:20px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.opt{border:2px solid #d9e6f2;background:#f8fbff;border-radius:18px;padding:17px;font-size:21px;font-weight:bold;cursor:pointer;transition:.18s}
+.opt:hover{transform:translateY(-2px);border-color:#5b8fd0;background:#edf6ff}
+.correct{background:#dcf8e9!important;border-color:#31b778!important;color:#11774a}
+.wrong{background:#ffe5e5!important;border-color:#ed6868!important;color:#b52e2e}
+.feedback{text-align:center;min-height:45px;font-size:20px;font-weight:bold;padding-top:15px;line-height:1.5}
+.next{display:block;margin:15px auto 0;border:0;border-radius:18px;padding:13px 30px;background:linear-gradient(135deg,#ff9c3d,#f05e72);color:#fff;font-size:19px;font-weight:bold;cursor:pointer}
+.next:disabled{opacity:.45;cursor:not-allowed}
+.tip{background:#fff8e7;border-radius:16px;padding:13px;text-align:center;margin-top:18px;font-size:17px}
+.scorebig{font-size:58px;font-weight:bold;color:#7654c8}
+.review{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;margin-top:20px}
+.review div{background:#f7faff;padding:10px 13px;border-radius:12px}
+@media(max-width:650px){.emoji{font-size:52px;gap:10px}.options,.review{grid-template-columns:1fr}h1{font-size:28px}.question{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>🎯 五年级华文 · Emoji 猜成语</h1>
+<div class="sub">20题挑战｜每题5分｜满分100分｜发挥你的成语联想力！</div>
+</header>
+
+<div class="top">
+<div class="badge">第 <span id="n">1</span> / 20 题</div>
+<div class="badge">⭐ 得分：<span id="score">0</span></div>
+<div class="badge">🔥 连对：<span id="streak">0</span></div>
+<div class="progress"><i id="bar"></i></div>
+</div>
+
+<div id="game"></div>
+</div>
+
+<script>
+const qs=[
+/* 原来的10题 */
+{e:["🌬️","🤰","💧","⬆️"],a:"风生水起",opts:["风生水起","难如登天","按图索骥","翩然而至"],tip:"🌬️ 风 + 🤰 生 + 💧 水 + ⬆️ 起"},
+{e:["😟","☁️","😣","🌫️"],a:"愁云惨淡",opts:["愁云惨淡","晴天霹雳","引以为傲","数以百计"],tip:"😟 愁 + ☁️ 云 + 😣 惨 + 🌫️ 淡"},
+{e:["🔢","➡️","💯","🧮"],a:"数以百计",opts:["数以百计","无以媲美","猝不及防","愁云惨淡"],tip:"🔢 数 + ➡️ 以 + 💯 百 + 🧮 计"},
+{e:["😣","➡️","🧗","☁️"],a:"难如登天",opts:["难如登天","风生水起","引以为傲","按图索骥"],tip:"😣 难 + ➡️ 如 + 🧗 登 + ☁️ 天"},
+{e:["⚡","🚫","⏱️","🛡️"],a:"猝不及防",opts:["猝不及防","晴天霹雳","翩然而至","数以百计"],tip:"⚡ 突然 + 🚫 不 + ⏱️ 及 + 🛡️ 防"},
+{e:["🚫","🤝","⚖️","🏆"],a:"无以媲美",opts:["无以媲美","风生水起","难如登天","引以为傲"],tip:"🚫 无 + 🤝 以 + ⚖️ 媲 + 🏆 美；想一想：没有谁可以和它相比。"},
+{e:["👉","📌","❤️","🏆"],a:"引以为傲",opts:["引以为傲","愁云惨淡","猝不及防","按图索骥"],tip:"👉 引 + 📌 以 + ❤️ 为 + 🏆 傲"},
+{e:["🗺️","🔍","🐎","👣"],a:"按图索骥",opts:["按图索骥","翩然而至","晴天霹雳","无以媲美"],tip:"🗺️ 图 + 🔍 索 + 🐎 骥；按照图上的线索寻找目标。"},
+{e:["☀️","🌤️","⚡","😱"],a:"晴天霹雳",opts:["晴天霹雳","难如登天","愁云惨淡","引以为傲"],tip:"☀️ 晴天 + ⚡ 霹雳；晴朗天空突然响起惊雷。"},
+{e:["🦋","💨","➡️","🌸"],a:"翩然而至",opts:["翩然而至","风生水起","数以百计","猝不及防"],tip:"🦋 轻盈优美 + 💨 轻快 + ➡️ 来到 + 🌸；形容轻快、优美地到来。"},
+
+/* 五年级常见成语复习10题 */
+{e:["🗣️","⚔️","🛡️","❓"],a:"自相矛盾",opts:["自相矛盾","守株待兔","画蛇添足","狐假虎威"],tip:"🗣️ 前后说法冲突 + ⚔️ 矛 + 🛡️ 盾；说话或做事前后不一致。"},
+{e:["🌳","🪵","🐇","🏃"],a:"守株待兔",opts:["守株待兔","刻舟求剑","亡羊补牢","井底之蛙"],tip:"🌳 守着树 + 🐇 等兔子；比喻不主动努力，只想等待意外收获。"},
+{e:["🐍","✍️","➕","🦶"],a:"画蛇添足",opts:["画蛇添足","滥竽充数","惊弓之鸟","掩耳盗铃"],tip:"🐍 画蛇 + ✍️ 添 + 🦶 足；比喻做了多余的事，反而坏事。"},
+{e:["🐺","🦊","🐯","👑"],a:"狐假虎威",opts:["狐假虎威","自相矛盾","守株待兔","亡羊补牢"],tip:"🦊 狐狸借 🐯 老虎的威风；比喻借助别人的势力欺压人。"},
+{e:["🐑","🚪","🕳️","🔨"],a:"亡羊补牢",opts:["亡羊补牢","刻舟求剑","井底之蛙","画蛇添足"],tip:"🐑 丢了羊 + 🚪 有漏洞 + 🔨 修补；出了问题以后想办法补救。"},
+{e:["⛵","✍️","📍","🗡️"],a:"刻舟求剑",opts:["刻舟求剑","守株待兔","掩耳盗铃","滥竽充数"],tip:"⛵ 船 + ✍️ 刻记号 + 🗡️ 剑掉入水；用不变的方法寻找已经变化的事物。"},
+{e:["🙉","👂","🔔","🚪"],a:"掩耳盗铃",opts:["掩耳盗铃","惊弓之鸟","狐假虎威","井底之蛙"],tip:"🙉 捂住耳朵 + 🔔 铃；以为自己听不见，别人也听不见。"},
+{e:["🐸","🕳️","👀","🌌"],a:"井底之蛙",opts:["井底之蛙","亡羊补牢","惊弓之鸟","画蛇添足"],tip:"🐸 青蛙 + 🕳️ 井底 + 👀 只能看到一小片天空；比喻见识短浅。"},
+{e:["🏹","🐦","😱","💨"],a:"惊弓之鸟",opts:["惊弓之鸟","滥竽充数","自相矛盾","翩然而至"],tip:"🏹 弓弦声就让 🐦 😱；比喻受过惊吓后遇到一点动静就非常害怕。"},
+{e:["🎺","🎵","👥","🎭"],a:"滥竽充数",opts:["滥竽充数","狐假虎威","按图索骥","数以百计"],tip:"🎺 乐器 + 🎵 演奏 + 👥 混在人群中；比喻没有真才实学的人混在行家里面充数。"}
+];
+
+let i=0,score=0,streak=0,locked=false,answers=[];
+
+function shuffle(arr){return [...arr].sort(()=>Math.random()-0.5)}
+
+function render(){
+ locked=false;
+ const q=qs[i];
+ document.getElementById("n").textContent=i+1;
+ document.getElementById("score").textContent=score;
+ document.getElementById("streak").textContent=streak;
+ document.getElementById("bar").style.width=(i/20*100)+"%";
+ const opts=shuffle(q.opts);
+ const part=i<10?"🌈 第一关｜本课成语":"📚 第二关｜五年级成语复习";
+ document.getElementById("game").innerHTML=`
+ <div class="card">
+   <div class="title">🔍 第 ${i+1} 题：Emoji 猜成语</div>
+   <div class="part">${part} · 每题5分</div>
+   <div class="emoji">${q.e.map(x=>`<span>${x}</span>`).join("")}</div>
+   <div class="question">这四个 Emoji 代表哪一个四字成语？</div>
+   <div class="hint">💡 可以想想 Emoji 的意思、谐音、动作或四个画面的组合。</div>
+   <div class="options">
+   ${opts.map(x=>`<button class="opt" onclick="answer(this,'${x}')">${x}</button>`).join("")}
+   </div>
+   <div id="feedback" class="feedback"></div>
+   <button id="next" class="next" onclick="next()" disabled>${i===19?"🏆 查看最终成绩":"➡️ 下一题"}</button>
+   <div class="tip">🌟 小提示：不一定每个 Emoji 都是直接代表一个字，要发挥联想力哦！</div>
+ </div>`;
+}
+
+function answer(btn,ans){
+ if(locked)return;
+ locked=true;
+ const q=qs[i], ok=ans===q.a;
+ answers.push({q:q.a,ok});
+ document.querySelectorAll(".opt").forEach(b=>{
+   b.disabled=true;
+   if(b.textContent===q.a)b.classList.add("correct");
+ });
+ if(ok){
+   score+=5;streak++;
+   document.getElementById("feedback").innerHTML="🎉 答对了！ +5分";
+   document.getElementById("feedback").style.color="#11774a";
+ }else{
+   streak=0;
+   btn.classList.add("wrong");
+   document.getElementById("feedback").innerHTML=`💡 再想一想！正确答案是「${q.a}」<br><small>${q.tip}</small>`;
+   document.getElementById("feedback").style.color="#b52e2e";
+ }
+ document.getElementById("score").textContent=score;
+ document.getElementById("streak").textContent=streak;
+ document.getElementById("next").disabled=false;
+}
+
+function next(){
+ if(i<19){i++;render();window.scrollTo({top:0,behavior:"smooth"});}
+ else finish();
+}
+
+function finish(){
+ document.getElementById("bar").style.width="100%";
+ let msg=score===100?"🏆 成语王！20题全部答对，太厉害了！":
+         score>=90?"🌟 超强！你的成语联想力一级棒！":
+         score>=80?"👏 很棒！已经掌握得很好！":
+         score>=60?"😊 不错！再复习一次会更厉害！":
+         "💪 别灰心！再挑战一次，一定会进步！";
+ const wrong=answers.filter(x=>!x.ok).map(x=>x.q);
+ document.getElementById("game").innerHTML=`
+ <div class="card" style="text-align:center">
+   <div style="font-size:75px">🎊</div>
+   <h2 style="font-size:32px;margin:8px">挑战完成！</h2>
+   <div class="scorebig">${score} / 100</div>
+   <p style="font-size:23px">${msg}</p>
+   <p style="font-size:19px">共20题，每题5分。</p>
+   ${wrong.length?`<div style="font-size:18px;margin-top:18px">📖 建议再复习：${wrong.join("、")}</div>`:`<div style="font-size:20px;color:#168254;font-weight:bold">✨ 全部答对，没有需要复习的成语！</div>`}
+   <button class="next" onclick="location.reload()">🔄 再玩一次</button>
+ </div>`;
+}
+render();
+</script>
+</body>
+</html>
